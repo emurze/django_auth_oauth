@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Log-in{% endblock %}
+
+{% block main %}
+    {% if form.errors %}
+        <p>
+            Your username and password didn't match.
+            Please try again.
+        </p>
+    {% endif %}
+    <a href="{% url 'password_reset' %}">
+        You can reset your password.
+    </a>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p><button type="submit">login</button></p>
+    </form>
+{% endblock %}

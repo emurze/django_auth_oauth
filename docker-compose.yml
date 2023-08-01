@@ -1,0 +1,44 @@
+version: "3.5"
+services:
+  app_auth_oauth:
+    build: .
+    image: 'app_auth_oauth:1'
+    container_name: 'app_auth_oauth'
+    command: >
+      sh -c "cd src &&
+             python3 manage.py migrate --no-input &&
+             python3 manage.py createadmin &&
+             python3 manage.py runserver 0.0.0.0:8080"
+    networks:
+      - backend
+    ports:
+      - '8080:8080'
+    environment:
+      - 'DB_NAME=optimization_app'
+      - 'DB_USER=optimization_app'
+      - 'DB_PASSWORD=12345678'
+      - 'DB_HOST=db_postgres'
+      - 'DB_POST=5432'
+    volumes:
+      - ./src:/service/src
+    restart: unless-stopped
+    depends_on:
+      - db_postgres
+
+  db_postgres:
+    image: postgres:13
+    container_name: 'db_postgres'
+    networks:
+      - backend
+    environment:
+      - POSTGRES_DB=optimization_app
+      - POSTGRES_USER=optimization_app
+      - POSTGRES_PASSWORD=12345678
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+networks:
+  backend:
+    driver: bridge
+volumes:
+  postgres:

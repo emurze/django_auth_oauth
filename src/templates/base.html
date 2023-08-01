@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+    {% with request.user as user %}
+        <header id="header">
+            <span class="logo">
+                <a href="{% url 'dashboard' 'dashboard' %}">Bookmarks</a>
+            </span>
+            <nav class="menu">
+                <span {% if selected == 'dashboard' %}class="selected"{% endif %}>
+                    <a href="{% url 'dashboard' 'dashboard' %}">dashboard</a>
+                </span>
+                <span {% if selected == 'images' %}class="selected"{% endif %}>
+                    <a href="{% url 'dashboard' 'images' %}">images</a>
+                </span>
+                <span {% if selected == 'people' %}class="selected"{% endif %}>
+                    <a href="{% url 'dashboard' 'people' %}">people</a>
+                </span>
+            </nav>
+                {% if user.is_authenticated %}
+                    <span class="user">
+                        <span class="user__name">
+                            {{ user.first_name|default:user.username }}
+                        </span>
+                        <span>
+                            <a href="{% url 'password_change' %}">
+                                change password
+                            </a>
+                        </span>
+                        <span>
+                            <a href="{% url 'logout' %}">logout</a>
+                        </span>
+                    </span>
+                {% else %}
+                    <span class="user">
+                        <a href="{% url 'register' %}">register</a>
+                        <a href="{% url 'login' %}">login</a>
+                    </span>
+                {% endif %}
+        </header>
+    {% endwith %}
+
+    <main id="main">
+        {% block main %}
+        {% endblock %}
+    </main>
+</body>
+</html>
