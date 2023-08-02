@@ -13,12 +13,7 @@ services:
       - backend
     ports:
       - '8080:8080'
-    environment:
-      - 'DB_NAME=optimization_app'
-      - 'DB_USER=optimization_app'
-      - 'DB_PASSWORD=12345678'
-      - 'DB_HOST=db_postgres'
-      - 'DB_POST=5432'
+    env_file: ./.env.example
     volumes:
       - ./src:/service/src
     restart: unless-stopped
@@ -30,10 +25,7 @@ services:
     container_name: 'db_postgres'
     networks:
       - backend
-    environment:
-      - POSTGRES_DB=optimization_app
-      - POSTGRES_USER=optimization_app
-      - POSTGRES_PASSWORD=12345678
+    env_file: ./.env.example
     volumes:
       - postgres:/var/lib/postgresql/data
     restart: unless-stopped

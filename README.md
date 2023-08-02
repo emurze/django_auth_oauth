@@ -11,5 +11,5 @@ mkdir src/logs
 ```
 
 ```bash
-docker compose up
+docker compose up --build
 ```
