@@ -1,10 +1,7 @@
 import abc
-
 from django.contrib.auth.models import User
 from django.core.handlers.wsgi import WSGIRequest
-
-from apps.account.exceptions import EmailValidationError, \
-    PasswordValidationError
+from apps.account.models import Account
 
 
 class BaseAuthBackend(abc.ABC):
@@ -18,13 +15,14 @@ class BaseAuthBackend(abc.ABC):
 
 class EmailAuthBackend(BaseAuthBackend):
     def authenticate(self, request: WSGIRequest, **credentials) -> User | None:
-        try:
-            if (password := credentials.get('password')) is None:
-                raise PasswordValidationError
-            if (email := credentials.get('username')) is None:
-                raise EmailValidationError
+        if (email := credentials.get('username')) is None:
+            return None
+        if password := credentials.get('password1') is None:
+            return None
 
+        try:
             user = User.objects.get(email=email)
+
             if user.check_password(password):
                 return user
             else:
@@ -38,3 +36,7 @@ class EmailAuthBackend(BaseAuthBackend):
             return user
         except (User.DoesNotExist, User.MultipleObjectsReturned):
             return None
+
+
+def create_account(backend, user, *args, **kwargs):
+    Account.objects.get_or_create(user=user)

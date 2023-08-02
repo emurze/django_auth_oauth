@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages as ms
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
@@ -6,6 +8,8 @@ from django.views import View
 
 from apps.account.forms import RegistrationForm, UserEditForm, AccountEditForm
 from apps.account.models import Account
+
+lg = logging.getLogger(__name__)
 
 
 class RegistrationView(View):
@@ -23,21 +27,20 @@ class RegistrationView(View):
             user.set_password(cd['password1'])
             user.save()
             Account.objects.create(user=user)
+            lg.info('REDIRECT')
             return render(request, self.template_name_done)
         else:
-            return self.get(request)
+            context = {'form': form}
+            return render(request, self.template_name, context)
 
 
 class EditView(View):
     template_name = 'account/edit.html'
-    template_name_done = 'account/edit_done.html'
 
     def get(self, request: WSGIRequest) -> HttpResponse:
-        user_form = UserEditForm(instance=request.user)
-        account_form = AccountEditForm(instance=request.user.account,)
         context = {
-            'user_form': user_form,
-            'account_form': account_form,
+            'user_form': UserEditForm(instance=request.user),
+            'account_form': AccountEditForm(instance=request.user.account),
         }
         return render(request, self.template_name, context)
 
@@ -50,15 +53,12 @@ class EditView(View):
         if user_form.is_valid() and account_form.is_valid():
             user_form.save()
             account_form.save()
-
-            message = 'Cool! You edited your account <strong>GAY</strong>'
-            ms.success(request, message)
+            ms.success(request, 'Cool! You edited your account.')
             return self.get(request)
         else:
-            ms.error(request, 'Please enter the correct data.')
-
+            ms.error(request, 'You must pass the validation.')
             context = {
                 'user_form': user_form,
-                'account_form': account_form,
+                'account_form': account_form
             }
             return render(request, self.template_name, context)

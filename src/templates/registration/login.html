@@ -12,6 +12,13 @@
     <a href="{% url 'password_reset' %}">
         You can reset your password.
     </a>
+    <ul class="social">
+        <li class="google">
+            <a href="{% url 'social:begin' 'google-oauth2' %}">
+                Sing in with Google
+            </a>
+        </li>
+    </ul>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}

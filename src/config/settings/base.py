@@ -6,7 +6,7 @@ SECRET_KEY = 'django-insecure-^r)6dt^$l5do1@v@nt+k@b)og^*_2=vjpnrwvs+6-0yvk8wi-%
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['mysite.com', '0.0.0.0']
 
 
 INSTALLED_APPS = [
@@ -20,6 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'debug_toolbar',
+    'social_django',
+    'django_extensions',
 
     'apps.base.apps.BaseConfig',
 ]
@@ -55,6 +57,9 @@ MEDIA_ROOT = BASE_DIR.parent / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '95766675902-br31vrimd15ao2bd98lj954o5ecfo7vn.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 if DEBUG:
     import socket  # only if you haven't already imported this
