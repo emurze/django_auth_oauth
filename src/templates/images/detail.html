@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+
+{% block title %}{{ image.title }}{% endblock %}
+
+{% block main %}
+    <h1>Bookmark an image.</h1>
+    <h4>
+        likes
+        <span class="counter">{{ image.user_likes.count }}</span>
+    </h4>
+    <a href="{{ image.image.url }}">
+        <img src="{% thumbnail image.image 0x800 %}" alt="" />
+    </a>
+    <form method="POST" class="like-form">
+        {% csrf_token %}
+        <button class="like-button">{{ action }}</button>
+    </form>
+    <div class="user_likes">
+        {% for like_user in image.user_likes.all %}
+            <h4>{{ like_user.username }}</h4>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', _ => {
+            const like_form = document.querySelector('.like-form')
+            const like_button = document.querySelector("button[class='like-button']")
+            const counter = document.querySelector('.counter')
+            const user_likes = document.querySelector('.user_likes')
+            const url = "{{ image.get_absolute_url }}"
+            const csrf_token_input = document.querySelector("input[name='csrfmiddlewaretoken']")
+            const csrf_token = csrf_token_input ? csrf_token_input.value : null
+
+            like_form.onsubmit = (e) => {
+                const action = like_button.innerText
+                e.preventDefault()
+                const form = new FormData()
+                form.append('image_id', '{{ image.id }}')
+                form.append('action', action)
+
+                const headers = {
+                    'X-CSRFToken': csrf_token,
+                    'Content-Type': `multipart/form-data;
+                     boundary=${form._boundary}`,
+                }
+                async function send_post() {
+                    const response = await axios.post(url, form, {headers})
+                    like_button.innerText = response.data.action
+                    counter.innerText = response.data.counter
+
+                    let html = []
+                    for (let user of response.data.user_likes) {
+                        html.push(`<h4>${user.username}</h4>`)
+                    }
+                    user_likes.innerHTML = html.join('')
+                }
+                send_post()
+            }})
+    </script>
+{% endblock %}

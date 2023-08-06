@@ -1,10 +1,13 @@
+import os
 from pathlib import Path
+
+from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-^r)6dt^$l5do1@v@nt+k@b)og^*_2=vjpnrwvs+6-0yvk8wi-%'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = ['mysite.com', '0.0.0.0']
 
@@ -22,7 +25,10 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'social_django',
     'django_extensions',
+    'easy_thumbnails',
+    'rest_framework',
 
+    'apps.image.apps.ImageConfig',
     'apps.base.apps.BaseConfig',
 ]
 
@@ -58,8 +64,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '95766675902-br31vrimd15ao2bd98lj954o5ecfo7vn.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+
+ALLOWED_IMAGE_EXTENSIONS = ('jpeg', 'jpg', 'png',)
+
+CSRF_USE_SESSIONS = True
+CSRF_COOKIE_HTTPONLY = True
+
+LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
+LOGIN_URL = reverse_lazy('login')
 
 if DEBUG:
     import socket  # only if you haven't already imported this

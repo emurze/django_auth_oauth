@@ -37,3 +37,5 @@ button {
 
 a {text-decoration: none; color: blue}
 a, a:visited, a:hover, a:active {color: inherit}
+
+textarea {resize: none;}

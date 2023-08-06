@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Images{% endblock %}
+
+{% block main %}
+    {% with images.count as total_count %}
+        <h2>
+            Image{{ total_count|pluralize }} ({{ total_count }}) |
+            <a href="{% url 'images:create' %}">create image</a>
+        </h2>
+    {% endwith %}
+    <div class="images">
+        {% include 'images/list_images.html' %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const image_list = document.querySelector('.images')
+        let page = 1
+        let empty_page = false
+        let block_request = false
+
+        document.addEventListener('scroll', _ => {
+            const indent = 200
+            const margin = document.body.clientHeight - window.innerHeight - indent
+
+            if (window.pageYOffset > margin && !empty_page && !block_request) {
+                console.log(`scroll ${page}`)
+                block_request = true
+                page++
+
+                async function append_html() {
+                    const response = await axios.get(`?images_only=true&page=${page}`)
+                    const html = response.data
+
+                    if (html === '') empty_page = true
+                    else {
+                        block_request = false
+                        image_list.insertAdjacentHTML('beforeend', html)
+                    }
+                }
+                append_html()
+            }
+        })
+        const scroll_event = new Event('scroll')
+        window.dispatchEvent(scroll_event)
+    </script>
+{% endblock %}

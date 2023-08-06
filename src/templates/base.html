@@ -4,22 +4,27 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .image {
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
     {% with request.user as user %}
         <header id="header">
             <span class="logo">
-                <a href="{% url 'dashboard' 'dashboard' %}">Bookmarks</a>
+                <a href="{% url 'dashboard' %}">Bookmarks</a>
             </span>
             <nav class="menu">
                 <span {% if selected == 'dashboard' %}class="selected"{% endif %}>
-                    <a href="{% url 'dashboard' 'dashboard' %}">dashboard</a>
+                    <a href="{% url 'dashboard' %}">dashboard</a>
                 </span>
                 <span {% if selected == 'images' %}class="selected"{% endif %}>
-                    <a href="{% url 'dashboard' 'images' %}">images</a>
+                    <a href="{% url 'images:list' %}">images</a>
                 </span>
                 <span {% if selected == 'people' %}class="selected"{% endif %}>
-                    <a href="{% url 'dashboard' 'people' %}">people</a>
+                    <a href="{% url 'dashboard' %}">people</a>
                 </span>
             </nav>
                 {% if user.is_authenticated %}
@@ -49,5 +54,10 @@
         {% block main %}
         {% endblock %}
     </main>
+
+    <script src="{% static 'js/get_cookies.js' %}"></script>
+    <script src="{% static 'js/axios.min.js' %}"></script>
+    {% block script %}
+    {% endblock %}
 </body>
 </html>

@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from .base import BASE_DIR
 
@@ -8,25 +9,19 @@ LOGGING = {
     "disable_existing_loggers": False,
     "handlers": {
         "file": {
-            "level": "DEBUG",
+            "level": os.getenv('LOGGING_LEVEL'),
             "class": "logging.FileHandler",
             "filename": Path(BASE_DIR.parent, "logs", "general.log"),
         },
         "stream": {
-            "level": "DEBUG",
+            "level": os.getenv('LOGGING_LEVEL'),
             "class": "logging.StreamHandler",
         },
-        # 'debug_toolbar_log': {
-        #     'level': 'DEBUG',
-        #     'class': 'debug_toolbar.panels.logging.ThreadTrackingHandler',
-        #     'collector': collector,
-        # },
     },
     "loggers": {
         "": {
-            "level": "DEBUG",
+            "level": os.getenv('LOGGING_LEVEL'),
             "handlers": [
-                # "debug_toolbar_log",
                 "stream",
                 "file",
             ],

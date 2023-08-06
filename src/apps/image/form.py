@@ -1,37 +1,71 @@
+import logging
+
 import requests
 from django import forms
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.utils.text import slugify
+
+from apps.image.models import Image
+
+lg = logging.getLogger(__name__)
 
 
 class ImageCreateForm(forms.ModelForm):
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'description',
+            'cols': 40,
+            'rows': 10,
+        }),
+        required=False,
+    )
+    image_response = None
+
     class Meta:
+        model = Image
         fields = ('title', 'url', 'description')
         widgets = {
-            'url': forms.HiddenInput,
+            'title': forms.TextInput(attrs={'placeholder': 'title'}),
+            'url': forms.TextInput(attrs={'placeholder': 'URL'}),
         }
 
     def save(self, commit=True):
-        image = super().save(commit=False)
+        """
+        1. Set slug and get upload_name.
+        2. Request an image.
+        3. Set the image.
+        """
+        instance = super().save(commit=False)
+
         url = self.cleaned_data['url']
-        extension = url.rsplit('.')[1].lower()
 
-        name = slugify(image.title)
+        instance.slug = file_name = slugify(instance.title)  # 1
+        extension = url.rsplit('.', 1)[1].lower()  # 1
+        upload_name = f'{file_name}.{extension}'  # 1
 
-        image_p = requests.get(url)
-
-        image_name = f'{name}.{extension}'
+        instance.image.save(
+            upload_name,
+            ContentFile(self.image_response.content),  # 4
+            save=False
+        )
 
         if commit:
-            image.save()
-        return image
+            instance.save()
+        return instance
 
     def clean_url(self):
         url = self.cleaned_data['url']
-        extension = url.rsplit('.')[1].lower()
+        extension = url.rsplit('.', 1)[1].lower()
+
+        try:
+            self.image_response = requests.get(url)  # 3
+            if self.image_response.status_code != 200:
+                raise requests.exceptions.ConnectionError
+        except requests.exceptions.ConnectionError:
+            raise forms.ValidationError('Enter a valid url')
 
         if extension not in settings.ALLOWED_IMAGE_EXTENSIONS:
             raise forms.ValidationError('Url isn\'t match.')
         else:
             return url
-

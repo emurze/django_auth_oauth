@@ -1,0 +1,18 @@
+{% load thumbnail %}
+{% for image in images %}
+    <article class="image">
+        <div class="info">
+            <h3>
+                <a href="{{ image.get_absolute_url }}">
+                    {{ image.title }}
+                </a>
+            </h3>
+        </div>
+        <div class="photo">
+           <a href="{{ image.get_absolute_url }}">
+                <img src="{% thumbnail image.image 440x440 crop="smart" %}"
+                     alt="" />
+            </a>
+        </div>
+    </article>
+{% endfor %}
