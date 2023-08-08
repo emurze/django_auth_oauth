@@ -5,14 +5,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator, PageNotAnInteger
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.decorators.http import require_POST
-from django.views.generic import DetailView, ListView
+from django.views.decorators.http import require_http_methods
+from django.views.generic import DetailView
 
-from apps.image.form import ImageCreateForm
+from apps.image.forms import ImageCreateForm
 from apps.image.models import Image
 from apps.image.serializers import ImageUsersSerializer
 
@@ -21,7 +21,7 @@ LikeAction = namedtuple('LikeButtonAction', 'like unlike')('like', 'unlike')
 
 
 class ImageCreateView(LoginRequiredMixin, View):
-    template_name = 'images/create.html'
+    template_name = 'image/create.html'
 
     def get(self, request: WSGIRequest) -> HttpResponse:
         context = {
@@ -47,7 +47,7 @@ class ImageCreateView(LoginRequiredMixin, View):
 
 class ImageDetailView(LoginRequiredMixin, DetailView):
     model = Image
-    template_name = 'images/detail.html'
+    template_name = 'image/detail.html'
     context_object_name = 'image'
     extra_context = {'selected': 'images'}
 
@@ -86,6 +86,7 @@ class ImageDetailView(LoginRequiredMixin, DetailView):
 
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def images_list(request: WSGIRequest) -> HttpResponse:
     images = Image.objects.all()
     paginator = Paginator(images, 8)
@@ -103,10 +104,10 @@ def images_list(request: WSGIRequest) -> HttpResponse:
 
     if images_only:
         context = {'images': images}
-        return render(request, 'images/list_images.html', context)
+        return render(request, 'image/list_images.html', context)
     else:
         context = {
             'images': images,
             'selected': 'images',
         }
-        return render(request, 'images/list.html', context)
+        return render(request, 'image/list.html', context)

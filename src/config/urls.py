@@ -12,7 +12,8 @@ urlpatterns = [
 
     path('', lambda request: redirect(reverse_lazy('dashboard'))),
     path('dashboard/', include('apps.base.urls')),
-    path('images/', include('apps.image.urls', namespace='images')),
+    path('image/', include('apps.image.urls', namespace='image')),
+    path('people/', include('apps.people.urls', namespace='people')),
 ]
 
 if settings.DEBUG:
@@ -20,4 +21,3 @@ if settings.DEBUG:
         *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
         path('__debug__/', include(debug_toolbar.urls))
     ]
-

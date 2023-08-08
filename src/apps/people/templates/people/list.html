@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+
+{% block title %}People{% endblock %}
+
+{% block main %}
+    <h1>People</h1>
+    {% for user in people %}
+        <article style="display: inline-block;">
+            <h3>
+                <a href="{{ user.get_absolute_url }}">{{ user.get_full_name }}</a>
+            </h3>
+            <a href="{{ user.get_absolute_url }}">
+                <img src="{% thumbnail user.account.photo 300x300 crop="smart" %}" alt="">
+            </a>
+        </article>
+    {% endfor %}
+{% endblock %}

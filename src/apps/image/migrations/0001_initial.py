@@ -22,9 +22,9 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=128)),
                 ('slug', models.SlugField(max_length=128)),
                 ('description', models.TextField(null=True)),
-                ('image', models.ImageField(upload_to='images/%Y/%d/%m')),
+                ('image', models.ImageField(upload_to='image/%Y/%d/%m')),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='image', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

@@ -6,11 +6,11 @@
     {% with images.count as total_count %}
         <h2>
             Image{{ total_count|pluralize }} ({{ total_count }}) |
-            <a href="{% url 'images:create' %}">create image</a>
+            <a href="{% url 'image:create' %}">create image</a>
         </h2>
     {% endwith %}
     <div class="images">
-        {% include 'images/list_images.html' %}
+        {% include 'image/list_images.html' %}
     </div>
 {% endblock %}
 

@@ -9,12 +9,12 @@ from django.utils.text import slugify
 class Image(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
-                             related_name='images')
+                             related_name='image')
     url = models.URLField(max_length=2000, unique=True)
     title = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(max_length=128, unique=True)
     description = models.TextField(null=True)
-    image = models.ImageField(upload_to='images/%Y/%d/%m')
+    image = models.ImageField(upload_to='image/%Y/%d/%m')
     created = models.DateTimeField(auto_now_add=True)
     user_likes = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                         related_name='liked_images')

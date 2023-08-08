@@ -30,6 +30,7 @@ INSTALLED_APPS = [
 
     'apps.image.apps.ImageConfig',
     'apps.base.apps.BaseConfig',
+    'apps.people.apps.PeopleConfig',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +75,10 @@ CSRF_COOKIE_HTTPONLY = True
 
 LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
 LOGIN_URL = reverse_lazy('login')
+
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda u: reverse_lazy('people:detail', args=(u.username,)),
+}
 
 if DEBUG:
     import socket  # only if you haven't already imported this

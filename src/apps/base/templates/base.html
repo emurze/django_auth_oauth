@@ -4,11 +4,7 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <style>
-        .image {
-            display: inline-block;
-        }
-    </style>
+    <style>.image {display: inline-block;}</style>
 </head>
 <body>
     {% with request.user as user %}
@@ -21,10 +17,10 @@
                     <a href="{% url 'dashboard' %}">dashboard</a>
                 </span>
                 <span {% if selected == 'images' %}class="selected"{% endif %}>
-                    <a href="{% url 'images:list' %}">images</a>
+                    <a href="{% url 'image:list' %}">images</a>
                 </span>
                 <span {% if selected == 'people' %}class="selected"{% endif %}>
-                    <a href="{% url 'dashboard' %}">people</a>
+                    <a href="{% url 'people:list' %}">people</a>
                 </span>
             </nav>
                 {% if user.is_authenticated %}

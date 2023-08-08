@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+
+{% block title %}{{ user.username }}{% endblock %}
+
+{% block main %}
+    <article>
+        <h3>{{ user.get_full_name }}</h3>
+        <p>
+            followers -
+            <span class="followers-counter">{{ user.followers.count }}</span>
+        </p>
+        <a href="{{ user.account.photo.url }}">
+            <img src="{% thumbnail user.account.photo 0x400 %}" alt="">
+        </a>
+        <form method="POST" class="follow-form">
+            {% csrf_token %}
+            <button class="follow-button">{{ action }}</button>
+        </form>
+    </article>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', _ => {
+            const follow_form = document.querySelector('.follow-form')
+            const followers_counter = document.querySelector('.followers-counter')
+            const follow_button = document.querySelector('.follow-button')
+            const csrf_token_input = document.querySelector("input[name='csrfmiddlewaretoken']")
+            const csrf_token = csrf_token_input ? csrf_token_input.value : null
+            const url = "{{ user.get_absolute_url }}"
+
+            follow_form.onsubmit = e => {
+                e.preventDefault()
+                const action = follow_button.innerText
+                const form = new FormData()
+                form.append('user_id', '{{ user.id }}')
+                form.append('action', action)
+
+                const headers = {
+                    'X-CSRFToken': csrf_token,
+                    'Content-Type': `multipart/form-data;
+                     boundary=${form._boundary}`,
+                }
+
+                async function send_post() {
+                    const response = await axios.post(url, form, {headers})
+                    follow_button.innerText = response.data.action
+                    followers_counter.innerText = response.data.followers_count
+                }
+                send_post()
+            }
+        })
+    </script>
+{% endblock %}

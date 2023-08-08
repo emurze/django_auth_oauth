@@ -35,8 +35,9 @@
             const csrf_token = csrf_token_input ? csrf_token_input.value : null
 
             like_form.onsubmit = (e) => {
-                const action = like_button.innerText
                 e.preventDefault()
+                const action = like_button.innerText
+
                 const form = new FormData()
                 form.append('image_id', '{{ image.id }}')
                 form.append('action', action)
