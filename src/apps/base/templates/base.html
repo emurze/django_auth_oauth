@@ -17,7 +17,7 @@
                     <a href="{% url 'dashboard' %}">dashboard</a>
                 </span>
                 <span {% if selected == 'images' %}class="selected"{% endif %}>
-                    <a href="{% url 'image:list' %}">images</a>
+                    <a href="{% url 'images:list' %}">images</a>
                 </span>
                 <span {% if selected == 'people' %}class="selected"{% endif %}>
                     <a href="{% url 'people:list' %}">people</a>

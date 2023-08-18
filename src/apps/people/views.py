@@ -1,17 +1,19 @@
+import enum
 import logging
-from collections import namedtuple
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView
 
 lg = logging.getLogger(__name__)
-FollowAction = namedtuple(
-    'FollowButtonAction',
-    'follow unfollow',
-)('follow', 'unfollow')
+
+
+class FollowAction(enum.StrEnum):
+    FOLLOW = 'follow'
+    UNFOLLOW = 'unfollow'
 
 
 class PeopleList(ListView, LoginRequiredMixin):
@@ -36,17 +38,17 @@ class PeopleDetail(DetailView, LoginRequiredMixin):
     @staticmethod
     def post(request: WSGIRequest, *args, **kwargs) -> JsonResponse:
         user_id = request.POST.get("user_id")
-        user = User.objects.get(id=user_id)
+        user = get_object_or_404(User, id=user_id)
 
         action = request.POST.get('action')
         match action:
-            case FollowAction.follow:
+            case FollowAction.FOLLOW:
                 user.followers.add(request.user)
-                action = FollowAction.unfollow
+                action = FollowAction.UNFOLLOW
 
-            case FollowAction.unfollow:
+            case FollowAction.UNFOLLOW:
                 user.followers.remove(request.user)
-                action = FollowAction.follow
+                action = FollowAction.FOLLOW
 
         lg.info(action)
 
@@ -61,9 +63,9 @@ class PeopleDetail(DetailView, LoginRequiredMixin):
         lg.debug(self.request.user.followers.all())
 
         if user.followers.contains(self.request.user):
-            action = FollowAction.unfollow
+            action = FollowAction.UNFOLLOW
         else:
-            action = FollowAction.follow
+            action = FollowAction.FOLLOW
 
         kwargs['action'] = action
         return super().get_context_data(**kwargs)

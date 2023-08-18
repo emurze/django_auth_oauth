@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
@@ -43,7 +42,7 @@ class Action(models.Model):
     content_object = ('content_type', 'object_id')
 
     class Meta:
-        ordering = ['-created']
-        indexes = [
+        ordering = ('-created',)
+        indexes = (
             models.Index(fields=('-created',)),
-        ]
+        )

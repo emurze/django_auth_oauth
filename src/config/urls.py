@@ -12,9 +12,9 @@ urlpatterns = [
 
     path('', lambda request: redirect(reverse_lazy('dashboard'))),
     path('dashboard/', include('apps.base.urls')),
-    path('image/', include('apps.image.urls', namespace='image')),
+    path('images/', include('apps.image.urls', namespace='images')),
     path('people/', include('apps.people.urls', namespace='people')),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
     urlpatterns += [

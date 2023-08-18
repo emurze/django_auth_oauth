@@ -3,7 +3,7 @@ from pathlib import Path
 
 from django.urls import reverse_lazy
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
@@ -56,10 +56,10 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR.parent / 'static/']
+STATIC_ROOT = BASE_DIR / 'static'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR.parent / 'media'
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -79,6 +79,10 @@ LOGIN_URL = reverse_lazy('login')
 ABSOLUTE_URL_OVERRIDES = {
     'auth.user': lambda u: reverse_lazy('people:detail', args=(u.username,)),
 }
+
+DEFAULT_ADMIN_NAME = 'adm1'
+DEFAULT_ADMIN_PASSWORD = 'adm1'
+DEFAULT_ADMIN_EMAIL = 'adm1@adm1.com'
 
 if DEBUG:
     import socket  # only if you haven't already imported this

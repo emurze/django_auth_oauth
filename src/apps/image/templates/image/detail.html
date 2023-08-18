@@ -30,7 +30,7 @@
             const like_button = document.querySelector("button[class='like-button']")
             const counter = document.querySelector('.counter')
             const user_likes = document.querySelector('.user_likes')
-            const url = "{{ image.get_absolute_url }}"
+            const url = "{% url 'images:like' %}"
             const csrf_token_input = document.querySelector("input[name='csrfmiddlewaretoken']")
             const csrf_token = csrf_token_input ? csrf_token_input.value : null
 
@@ -52,11 +52,10 @@
                     like_button.innerText = response.data.action
                     counter.innerText = response.data.counter
 
-                    let html = []
-                    for (let user of response.data.user_likes) {
-                        html.push(`<h4>${user.username}</h4>`)
-                    }
-                    user_likes.innerHTML = html.join('')
+
+                    user_likes.innerHTML = response.data.user_likes.map(
+                        user => `<h4>${user.username}</h4>`
+                    )
                 }
                 send_post()
             }})
